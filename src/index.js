@@ -2,52 +2,64 @@ import React from "react";
 import ReactDOM from "react-dom";
 import * as serviceWorker from "./serviceWorker";
 
-import Jumbotron from "react-bootstrap/Jumbotron";
 import Container from "react-bootstrap/Container";
 import ToggleButtonGroup from "react-bootstrap/ToggleButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
 import Row from "react-bootstrap/Row";
 
+import Paho from "paho-mqtt";
+
 import "./index.css";
-
-var unit = "F";
-
-class UnitSelect extends React.Component {
-  handleChange(val) {
-    unit = val;
-    console.log(val);
-  }
-
-  render() {
-    return (
-      <ToggleButtonGroup type="radio" name="unit" onChange={this.handleChange} defaultValue={"F"}>
-        <ToggleButton name="unit" value={"F"}>Fahrenheit</ToggleButton>
-        <ToggleButton name="unit" value={"C"}>Celsius</ToggleButton>
-      </ToggleButtonGroup>
-    );
-  }
-}
 
 class Temp extends React.Component {
   constructor(props) {
     super(props);
+
+    this.client = new Paho.Client("ws://mqtt.eclipse.org/mqtt:80", "ovenClient");
+    this.client.onMessageArrived = (message) => {
+      console.log(message.payloadString);
+      var json = JSON.parse(message.payloadString);
+      console.log(message.json);
+      this.setState((state, props) => {
+        return {currentTempF: json.f, currentTempC: json.c};
+      });
+      this.setState((state, props) => {
+        return this.state.unit === "F" ? {current: json.f} : 
+          {current: json.c};
+      });
+    };
+    this.client.connect({onSuccess:() => {
+      this.client.subscribe("ovenTest");
+    }});
+
     this.state = {
-      fahrenheit: 32,
-      celsius: 0,
+      unit: "F",
+      currentTempF: "0",
+      currentTempC: "0",
+      current: "0",
     };
   }
 
+  handleChange = (val) => {
+    this.setState((state, props) => {
+      return val === "F" ? {unit: val, current: this.state.currentTempF} :
+        {unit: val, current: this.state.currentTempC};
+    });
+  } 
+
   render() {
-    var currentTemp;
-
-    if (unit === "F") {
-      currentTemp = this.state.fahrenheit
-    } else {
-      currentTemp = this.state.celsius
-    }
-
     return (
-      <h1 className="display-4 text-center text-dark">{currentTemp}° {unit}</h1>
+      <Container>
+        <Row className="justify-content-md-center">
+          <h1 className="display-4 text-center text-dark">{this.state.current}° {this.state.unit}</h1>
+        </Row>
+        <Row className="justify-content-md-center">
+          <ToggleButtonGroup type="radio" name="unit" onChange={this.handleChange} defaultValue={"F"}>
+            <ToggleButton name="unit" value={"F"}>Fahrenheit</ToggleButton>
+            <ToggleButton name="unit" value={"C"}>Celsius</ToggleButton>
+          </ToggleButtonGroup>
+        </Row>
+      </Container>
     );
   }
 }
@@ -59,14 +71,7 @@ class App extends React.Component {
         <Container>
           <h1 className="display-3 text-center text-dark font-weight-bold">Braden's Oven Temperature</h1>
         </Container>
-        <Container>
-            <Row className="justify-content-md-center">
-              <Temp />
-            </Row>
-            <Row className="justify-content-md-center">
-              <UnitSelect />
-            </Row>
-        </Container>
+        <Temp />
       </div>
     );
   }
