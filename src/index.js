@@ -38,9 +38,11 @@ class Temp extends React.Component {
       currentTempC: "0",
       current: "0",
     };
+
+    this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange = (val) => {
+  handleChange(val) {
     this.setState((state, props) => {
       return val === "F" ? {unit: val, current: this.state.currentTempF} :
         {unit: val, current: this.state.currentTempC};
@@ -61,6 +63,10 @@ class Temp extends React.Component {
         </Row>
       </Container>
     );
+  }
+
+  componentWillUnmount() {
+    this.client.disconnect();
   }
 }
 
