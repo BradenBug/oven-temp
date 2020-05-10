@@ -1,4 +1,4 @@
-ws = new WebSocket('ws://localhost:8080');
+ws = new WebSocket('ws://localhost:5000');
 
 var curentTempF = 0;
 var curentTempC = 0;
