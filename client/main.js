@@ -1,7 +1,10 @@
-ws = new WebSocket('ws://localhost:5000');
+// const host = 'ws://3.21.39.82';
+const host = 'ws://localhost';
+const port = '5000';
+var curentTempF = 80;
+var curentTempC = 26.7;
 
-var curentTempF = 0;
-var curentTempC = 0;
+const ws = new WebSocket(host + ':' + port);
 
 ws.onmessage = (message) => {
     console.log(message);
@@ -29,6 +32,6 @@ function selectC() {
     $('#temp').text(currentTempC);
 }
 
-function boob() {
-    console.log('boob');
+function bowBoat() {
+    console.log('bowBoat');
 }

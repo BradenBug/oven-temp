@@ -12,16 +12,52 @@
   <body>
     <div class="container">
       <h1 class="text-center">Braden's Oven Temperature</h1>
-      <div class="jumbotron">
-        <h2 id="temp" class="text-center">0</h2>
-        <div class="row justify-content-center">
-          <div class="btn-group btn-group-toggle" data-toggle="buttons" >
-            <label id="fbutton" class="btn btn-outline-secondary active" onclick="selectF()">
-              <input type="radio" name="unit" id="fahrenheit"> F
-            </label>
-            <label id="cbutton" class="btn btn-outline-secondary" onclick="selectC()">
-              <input type="radio" name="unit" id="celcius"> C
-            </label>
+      <div class="row justify-content-center">
+        <div class="col">
+          <h2 id="temp" class="text-center">0</h2>
+          <div class="row justify-content-center">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons" >
+              <label id="fbutton" class="btn btn-outline-secondary active" onclick="selectF()">
+                <input type="radio" name="unit" id="fahrenheit"> F
+              </label>
+              <label id="cbutton" class="btn btn-outline-secondary" onclick="selectC()">
+                <input type="radio" name="unit" id="celcius"> C
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="row justify-content-between">
+            <div class="col">Users online: 2</div>
+            <div class="col">
+              <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#user-list">
+                Users
+              </button>
+            </div>
+          </div>
+          <div class="collapse" id="user-list">
+            <ul class="list-group">
+              <li class="list-group-item">user1</li>
+              <li class="list-group-item">user2</li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <div class="row justify-content-start no-gutters">
+                <p style="color:crimson">user1:&nbsp;</p>
+                <p>wassup</p>
+              </div>
+              <div class="row justify-content-start no-gutters">
+                <p style="color:dodgerblue">user2:&nbsp;</p>
+                <p>hi</p>
+              </div>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" id="chat-input">
+            <div class="input-group-append">
+              <button class="btn btn-primary" type="button" id="chat-send">Send</button>
+            </div>
           </div>
         </div>
       </div>
