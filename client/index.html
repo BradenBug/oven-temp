@@ -8,61 +8,90 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="index.css">
   </head>
   <body>
-    <div class="container">
-      <h1 class="text-center">Braden's Oven Temperature</h1>
-      <div class="row justify-content-center">
-        <div class="col">
-          <h2 id="temp" class="text-center">0</h2>
-          <div class="row justify-content-center">
-            <div class="btn-group btn-group-toggle" data-toggle="buttons" >
-              <label id="fbutton" class="btn btn-outline-secondary active" onclick="selectF()">
-                <input type="radio" name="unit" id="fahrenheit"> F
-              </label>
-              <label id="cbutton" class="btn btn-outline-secondary" onclick="selectC()">
-                <input type="radio" name="unit" id="celcius"> C
-              </label>
+    <div id="intro-page" class="row justify-content-center align-items-center h-100" style="">
+      <div class="col-6 my-auto">
+        <form onsubmit="return requestUsername()">
+          <div class="form-group">
+            <h2>Enter a username to continue</h2>
+            <input type="text" class="form-control" id="username-input" required>
+            <div class="invalid-feedback">
+              That username is taken. Please select another.
             </div>
           </div>
-        </div>
-        <div class="col">
-          <div class="row justify-content-between">
-            <div class="col">Users online: 2</div>
-            <div class="col">
-              <button class="btn btn-secondary" type="button" data-toggle="collapse" data-target="#user-list">
-                Users
-              </button>
-            </div>
-          </div>
-          <div class="collapse" id="user-list">
-            <ul class="list-group">
-              <li class="list-group-item">user1</li>
-              <li class="list-group-item">user2</li>
-            </ul>
-          </div>
-          <div class="card">
-            <div class="card-body">
-              <div class="row justify-content-start no-gutters">
-                <p style="color:crimson">user1:&nbsp;</p>
-                <p>wassup</p>
-              </div>
-              <div class="row justify-content-start no-gutters">
-                <p style="color:dodgerblue">user2:&nbsp;</p>
-                <p>hi</p>
-              </div>
-            </div>
-          </div>
-          <div class="input-group mb-3">
-            <input type="text" class="form-control" id="chat-input">
-            <div class="input-group-append">
-              <button class="btn btn-primary" type="button" id="chat-send">Send</button>
-            </div>
-          </div>
-        </div>
+          <button type="submit" class="btn btn-danger" onclick=>Submit</button>
+        </form>
       </div>
     </div>
 
+    <div id="main-page" style="display:none">
+      <header>
+        <div class="jumbotron jumbotron-fluid" style="background-image: url(https://i.postimg.cc/FNmdVH8v/scary-oven.jpg); background-size: cover; background-position: center">
+          <div class="container justify-content-start">
+            <h1 class="" style="color:white">
+              Braden's Oven Temperature
+            </h1>
+          </div>
+        </div>
+      </header>
+      <main role="main">
+        <div class="container-fluid">
+          <div class="row justify-content-center align-items-center">
+            <div class="col-4">
+              <h2 id="temp" class="text-center">0</h2>
+              <div class="row justify-content-center">
+                <div class="btn-group btn-group-toggle" data-toggle="buttons" >
+                  <label id="fbutton" class="btn btn-outline-danger active" onclick="selectF()">
+                    <input type="radio" name="unit" id="fahrenheit"> F
+                  </label>
+                  <label id="cbutton" class="btn btn-outline-danger" onclick="selectC()">
+                    <input type="radio" name="unit" id="celcius"> C
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <nav class="navbar navbar-light">
+                <a class="navbar-brand">
+                  Users Online: 2
+                </a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#user-list">
+                  <span class="navbar-toggler-icon">
+                    <i class="fas fa-bars" style="color:#000;"></i>
+                  </span>
+                </button>
+              </nav>
+              <div class="collapse" id="user-list">
+                <ul class="list-group">
+                  <li class="list-group-item">user1</li>
+                  <li class="list-group-item">user2</li>
+                </ul>
+              </div>
+              <div class="card">
+                <div class="card-body">
+                  <div class="row justify-content-start no-gutters">
+                    <p style="color:crimson">user1:&nbsp;</p>
+                    <p>wassup</p>
+                  </div>
+                  <div class="row justify-content-start no-gutters">
+                    <p style="color:dodgerblue">user2:&nbsp;</p>
+                    <p>hi</p>
+                  </div>
+                </div>
+              </div>
+              <div class="input-group mb-3">
+                <input type="text" class="form-control" id="chat-input">
+                <div class="input-group-append">
+                  <button class="btn btn-danger" type="button" id="chat-send">Send</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
       
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

@@ -13,8 +13,21 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+function constructMessage(type: string, data: string) {
+    return `{"type": "${type}", "data": ${data}}`;
+}
+
 function addUser(ws: WebSocket, username: string) {
-    usernames.set(ws, username);
+    if (usernameExists(username) && !usernames.has(ws)) {
+        ws.send(constructMessage('userAck', 'false'));
+    } else {
+        usernames.set(ws, username);
+        ws.send(constructMessage('userAck', 'true')); 
+    }
+}
+
+function usernameExists(username: string) {
+    return Array.from(usernames.values()).includes(username);
 }
 
 function broadcastMessage(ws: WebSocket, message: string) {
@@ -51,7 +64,7 @@ server.listen(5000, () => {
         // Broadcast the temperature
         wss.clients.forEach((wsClient: WebSocket) => {
             if (wsClient.readyState === WebSocket.OPEN) {
-                wsClient.send(message.toString());
+                wsClient.send(constructMessage('temp', message.toString()));
             }
         });
     });
