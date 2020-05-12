@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="index.css">
   </head>
   <body>
-    <div id="intro-page" class="row justify-content-center align-items-center h-100" style="">
+    <div id="intro-page" class="row justify-content-center align-items-center h-100">
       <div class="col-6 my-auto">
         <form onsubmit="return requestUsername()">
           <div class="form-group">
@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <div id="main-page" style="display:none">
+    <div id="main-page" style="display:none; height: 100%">
       <header>
         <div class="jumbotron jumbotron-fluid" style="background-image: url(https://i.postimg.cc/FNmdVH8v/scary-oven.jpg); background-size: cover; background-position: center">
           <div class="container justify-content-start">
@@ -37,9 +37,9 @@
         </div>
       </header>
       <main role="main">
-        <div class="container-fluid">
-          <div class="row justify-content-center align-items-center">
-            <div class="col-4">
+        <div class="container-fluid h-75">
+          <div class="row justify-content-center h-75"> 
+            <div class="col-4 align-self-center">
               <h2 id="temp" class="text-center">0</h2>
               <div class="row justify-content-center">
                 <div class="btn-group btn-group-toggle" data-toggle="buttons" >
@@ -52,10 +52,10 @@
                 </div>
               </div>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-4 h-100">
               <nav class="navbar navbar-light">
                 <a class="navbar-brand">
-                  Users Online: 2
+                  Users online: <span id="user-count">0</span>
                 </a>
                 <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#user-list">
                   <span class="navbar-toggler-icon">
@@ -70,21 +70,12 @@
                 </ul>
               </div>
               <div class="card">
-                <div class="card-body">
-                  <div class="row justify-content-start no-gutters">
-                    <p style="color:crimson">user1:&nbsp;</p>
-                    <p>wassup</p>
-                  </div>
-                  <div class="row justify-content-start no-gutters">
-                    <p style="color:dodgerblue">user2:&nbsp;</p>
-                    <p>hi</p>
-                  </div>
-                </div>
+                <div id="chatbox" class="card-body" style="overflow-y: auto"> </div>
               </div>
               <div class="input-group mb-3">
                 <input type="text" class="form-control" id="chat-input">
                 <div class="input-group-append">
-                  <button class="btn btn-danger" type="button" id="chat-send">Send</button>
+                  <button class="btn btn-danger" type="button" id="chat-send" onclick="sendMessage()">Send</button>
                 </div>
               </div>
             </div>

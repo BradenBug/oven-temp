@@ -14,6 +14,10 @@ ws.onmessage = (message) => {
         validateUsername(jsonMessage['data']);
     } else if (jsonMessage['type'] === 'temp') {
         updateTemp(jsonMessage['data']);
+    } else if (jsonMessage['type'] === 'chat') {
+        updateChat(jsonMessage['data']);
+    } else if (jsonMessage['type'] === 'userList') {
+        updateUserData(jsonMessage['data']);
     }
 }
 
@@ -66,6 +70,20 @@ function validateUsername(ackValue) {
     }
 }
 
-function bowBoat() {
-    console.log('bowBoat');
+function updateChat(chatData) {
+    $('#chatbox').append(`<div class="row justify-content-start no-gutters">`
+        + `<p style="color: crimson">${chatData.username}:&nbsp;</p>`
+        + `<p>${chatData.message}</p>`
+        + `</div>`);
+    $('#chatbox').scrollTop($('#chatbox').height());
+}
+
+function sendMessage() {
+    ws.send(constructMessage('message', $('#chat-input').val()));
+    $('#chat-input').val('');
+    $('#chat-input').focus();
+}
+
+function updateUserData(userList) {
+    $('#user-count').text(userList.length);
 }

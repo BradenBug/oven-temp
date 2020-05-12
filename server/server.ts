@@ -18,28 +18,35 @@ function constructMessage(type: string, data: string) {
 }
 
 function addUser(ws: WebSocket, username: string) {
-    if (usernameExists(username) && !usernames.has(ws)) {
+    if (getUsernameList().includes(username) && !usernames.has(ws)) {
         ws.send(constructMessage('userAck', 'false'));
     } else {
         usernames.set(ws, username);
         ws.send(constructMessage('userAck', 'true')); 
+        ws.send(constructMessage('userList', `${JSON.stringify(getUsernameList())}`));
     }
 }
 
-function usernameExists(username: string) {
-    return Array.from(usernames.values()).includes(username);
+function getUsernameList() {
+    return Array.from(usernames.values());
 }
 
-function broadcastMessage(ws: WebSocket, message: string) {
+function broadcastMessage(ws: WebSocket, text: string) {
+    const message = constructMessage('chat',
+        `{"username": "${usernames.get(ws)}", "message": "${text}"}`);
+
     wss.clients.forEach((wsClient: WebSocket) => {
-        if (wsClient !== ws && wsClient.readyState === WebSocket.OPEN) {
-            wsClient.send(usernames.get(ws) + ': ' +  message);
+        if (wsClient.readyState === WebSocket.OPEN) {
+            wsClient.send(message);
         }
     });
 }
 
 wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
     console.log(`Client connected with address ${req.socket.remoteAddress}`);
+    if (usernames.has(ws)) {
+        ws.send(constructMessage('userAck', 'true')); 
+    }
     ws.on('message', (message) => {
         var jsonMessage = JSON.parse(message.toString());
         if (jsonMessage['type'] === 'username') {
