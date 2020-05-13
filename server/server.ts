@@ -71,7 +71,9 @@ wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
         if (jsonMessage['type'] === 'username') {
             addUser(ws, jsonMessage['data']);
         } else if (jsonMessage['type'] === 'message') {
-            broadcastChatMessage(ws, jsonMessage['data']);
+            if (usernames.has(ws)) {
+                broadcastChatMessage(ws, jsonMessage['data']);
+            }
         }
     });
 

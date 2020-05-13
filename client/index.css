@@ -1,4 +1,14 @@
-html, body, main, .card, .card-body{
+html, body {
+    height: 100vh;
+    height: 100%;
+}
+
+main {
+    height: 70vh;
+    height: 70%;
+}
+
+.card, .card-body{
     height: 100vh;
     height: 100%;
 }
