@@ -38,9 +38,12 @@ function selectTemp(currentTemp) {
 }
 
 function sendMessage() {
-    ws.send(constructMessage('message', $('#chat-input').val()));
-    $('#chat-input').val('');
-    $('#chat-input').focus();
+    let message = $('#chat-input').val();
+    if (message.length > 0) {
+        ws.send(constructMessage('message', message)); 
+        $('#chat-input').val('');
+        $('#chat-input').focus();
+    }
 }
 
 function createUserListView() {
@@ -78,7 +81,7 @@ const updateChat = (chatData) => {
         + `<p style="color: ${chatData.color}">${chatData.username}:&nbsp;</p>`
         + `<p>${chatData.message}</p>`
         + `</div>`);
-    $('#chatbox').scrollTop($('#chatbox').height());
+    $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
 }
 
 const updateUserData = (newUserList) => {
