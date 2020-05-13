@@ -4,6 +4,15 @@ var curentTempF = 80;
 var curentTempC = 26.7;
 var userList = [];
 var userListUpdated = false;
+const escMap = new Map([
+    ['&', '&amp;'],
+    ['<', '&lt;'], 
+    ['>','&gt;'],
+    ['"', '&quot;'],
+    ["'", '&#x27;'],
+    ["/", '&#x2F;'],
+    ["`", '&grave;']]
+);
 
 const ws = new WebSocket(host + ':' + port);
 
@@ -38,7 +47,7 @@ function selectTemp(currentTemp) {
 }
 
 function sendMessage() {
-    let message = $('#chat-input').val();
+    let message = sanitize($('#chat-input').val());
     if (message.length > 0) {
         ws.send(constructMessage('message', message)); 
         $('#chat-input').val('');
@@ -104,4 +113,11 @@ const switchPage = (shown, hidden) => {
     })
 
     return false;
+}
+
+function sanitize(text) {
+    const reg = /[&<>"'/]/ig;
+    return text.replace(reg, (match) => {
+        return escMap.get(match);
+    });
 }
