@@ -1,5 +1,4 @@
-// const host = 'ws://3.21.39.82';
-const host = 'ws://localhost';
+const host = 'ws://3.21.39.82';
 const port = '5000';
 var curentTempF = 80;
 var curentTempC = 26.7;
