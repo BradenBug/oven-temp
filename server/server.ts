@@ -6,6 +6,7 @@ import * as WebSocket from 'ws';
 const ovenHost = 'mqtt://ughynpsq:9c8iIhKYKG2A@tailor.cloudmqtt.com:14322';
 const ovenPort = '14332';
 const usernames = new Map();
+const colors = new Map();
 
 const app = express();
 
@@ -18,28 +19,46 @@ function constructMessage(type: string, data: string) {
 }
 
 function addUser(ws: WebSocket, username: string) {
-    if (getUsernameList().includes(username) && !usernames.has(ws)) {
+    if (!isValidUsername(ws, username)) {
         ws.send(constructMessage('userAck', 'false'));
     } else {
         usernames.set(ws, username);
+        colors.set(ws, getRandomColor());
         ws.send(constructMessage('userAck', 'true')); 
-        ws.send(constructMessage('userList', `${JSON.stringify(getUsernameList())}`));
+        broadcastMessage(constructMessage('userList',
+            `${JSON.stringify(getUsernameList())}`));
     }
+}
+
+function isValidUsername(ws: WebSocket, username: string) {
+    const format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+
+    return (!format.test(username)
+        && !getUsernameList().includes(username));
 }
 
 function getUsernameList() {
     return Array.from(usernames.values());
 }
 
-function broadcastMessage(ws: WebSocket, text: string) {
-    const message = constructMessage('chat',
-        `{"username": "${usernames.get(ws)}", "message": "${text}"}`);
-
+function broadcastMessage(message: string) {
     wss.clients.forEach((wsClient: WebSocket) => {
         if (wsClient.readyState === WebSocket.OPEN) {
             wsClient.send(message);
         }
     });
+}
+
+function getRandomColor() {
+    return `hsla(${Math.random() * 360}, 100%, 50%, 1)`;
+}
+
+function broadcastChatMessage(ws: WebSocket, message: string) {
+    const chatMessage = constructMessage('chat',
+        `{"username": "${usernames.get(ws)}", `
+        + `"color": "${colors.get(ws)}", `
+        + `"message": "${message}"}`);
+    broadcastMessage(chatMessage); 
 }
 
 wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
@@ -52,8 +71,14 @@ wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
         if (jsonMessage['type'] === 'username') {
             addUser(ws, jsonMessage['data']);
         } else if (jsonMessage['type'] === 'message') {
-            broadcastMessage(ws, jsonMessage['data']);
+            broadcastChatMessage(ws, jsonMessage['data']);
         }
+    });
+
+    ws.on('close', () => {
+        usernames.delete(ws);
+        broadcastMessage(constructMessage(
+            'userList', `${JSON.stringify(getUsernameList())}`));
     });
 });
 
@@ -69,10 +94,6 @@ server.listen(5000, () => {
     mqttClient.on('message', (topic, message) => {
         console.log(`Message received: ${message.toString()}`);
         // Broadcast the temperature
-        wss.clients.forEach((wsClient: WebSocket) => {
-            if (wsClient.readyState === WebSocket.OPEN) {
-                wsClient.send(constructMessage('temp', message.toString()));
-            }
-        });
+        broadcastMessage(constructMessage('temp,', message.toString()));
     });
 });

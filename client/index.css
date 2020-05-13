@@ -3,10 +3,7 @@ html, body, main, .card, .card-body{
     height: 100%;
 }
 
-.vertical-center {
-    min-height: 100vh;
-    min-height: 100%;
-
-    display: flex;
-    align-items: center;
+.list-group {
+    max-height: 200px;
+    overflow-y: auto;
 }

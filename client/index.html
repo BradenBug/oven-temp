@@ -5,6 +5,10 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; form-action 'self';
+      script-src 'self' https://code.jquery.com/jquery-3.3.1.slim.min.js https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js;
+      connect-src ws://localhost:5000 ws://3.21.39.82:5000; img-src 'self' https://* data:; child-src 'self';
+      style-src 'unsafe-inline' 'self' https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css;">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -13,20 +17,21 @@
   <body>
     <div id="intro-page" class="row justify-content-center align-items-center h-100">
       <div class="col-6 my-auto">
-        <form onsubmit="return requestUsername()">
+        <form id="username-form"> 
           <div class="form-group">
             <h2>Enter a username to continue</h2>
+            <p>Username must only contain letters and numbers</p>
             <input type="text" class="form-control" id="username-input" required>
             <div class="invalid-feedback">
-              That username is taken. Please select another.
+              That username is either taken or has invalid characters. Please choose another.
             </div>
           </div>
-          <button type="submit" class="btn btn-danger" onclick=>Submit</button>
+          <button type="submit" class="btn btn-danger">Submit</button>
         </form>
       </div>
     </div>
 
-    <div id="main-page" style="display:none; height: 100%">
+    <div id="main-page" style="display: none; height: 100%">
       <header>
         <div class="jumbotron jumbotron-fluid" style="background-image: url(https://i.postimg.cc/FNmdVH8v/scary-oven.jpg); background-size: cover; background-position: center">
           <div class="container justify-content-start">
@@ -42,11 +47,11 @@
             <div class="col-4 align-self-center">
               <h2 id="temp" class="text-center">0</h2>
               <div class="row justify-content-center">
-                <div class="btn-group btn-group-toggle" data-toggle="buttons" >
-                  <label id="fbutton" class="btn btn-outline-danger active" onclick="selectF()">
+                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                  <label id="fbutton" class="btn btn-outline-danger active">
                     <input type="radio" name="unit" id="fahrenheit"> F
                   </label>
-                  <label id="cbutton" class="btn btn-outline-danger" onclick="selectC()">
+                  <label id="cbutton" class="btn btn-outline-danger">
                     <input type="radio" name="unit" id="celcius"> C
                   </label>
                 </div>
@@ -57,25 +62,22 @@
                 <a class="navbar-brand">
                   Users online: <span id="user-count">0</span>
                 </a>
-                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#user-list">
+                <button id="user-list-button" class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#user-list-collapse">
                   <span class="navbar-toggler-icon">
                     <i class="fas fa-bars" style="color:#000;"></i>
                   </span>
                 </button>
               </nav>
-              <div class="collapse" id="user-list">
-                <ul class="list-group">
-                  <li class="list-group-item">user1</li>
-                  <li class="list-group-item">user2</li>
-                </ul>
+              <div id="user-list-collapse" class="collapse navbar-collapse">
+                <ul id="user-list" class="list-group"></ul>
               </div>
               <div class="card">
                 <div id="chatbox" class="card-body" style="overflow-y: auto"> </div>
               </div>
               <div class="input-group mb-3">
-                <input type="text" class="form-control" id="chat-input">
+                <input id="chat-input" type="text" class="form-control">
                 <div class="input-group-append">
-                  <button class="btn btn-danger" type="button" id="chat-send" onclick="sendMessage()">Send</button>
+                  <button id="chat-button" class="btn btn-danger" type="button">Send</button>
                 </div>
               </div>
             </div>
@@ -84,10 +86,8 @@
       </main>
     </div>
       
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <!-- jQuery and Bootstrap -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <!-- My script :) -->
     <script src="main.js"></script>
