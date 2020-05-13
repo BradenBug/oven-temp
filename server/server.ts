@@ -94,6 +94,6 @@ server.listen(5000, () => {
     mqttClient.on('message', (topic, message) => {
         console.log(`Message received: ${message.toString()}`);
         // Broadcast the temperature
-        broadcastMessage(constructMessage('temp,', message.toString()));
+        broadcastMessage(constructMessage('temp', message.toString()));
     });
 });

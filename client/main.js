@@ -34,7 +34,7 @@ function requestUsername() {
 }
 
 function selectTemp(currentTemp) {
-    $('#temp').text(`${currentTemp}°`);
+    $('#temp').text(`${currentTemp}`);
 }
 
 function sendMessage() {
