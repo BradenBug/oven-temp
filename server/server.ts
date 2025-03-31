@@ -1,5 +1,6 @@
 const util = require('util');
-const http = require('http');
+import * as https from 'https';
+import * as fs from 'fs';
 import type { IncomingMessage } from 'http';
 import * as express from 'express';
 import * as WebSocket from 'ws';
@@ -9,10 +10,13 @@ import { config } from './config';
 const usernames = new Map();
 const colors = new Map();
 
-const app = express();
-
 // Initialize http server
-const server = http.createServer(app);
+const app = express();
+const options = {
+    key: fs.readFileSync(config.serverSSL.key),
+    cert: fs.readFileSync(config.serverSSL.cert)
+};
+const server = https.createServer(options, app);
 const wss = new WebSocket.Server({ server });
 const decoder = new TextDecoder('utf8');
 
