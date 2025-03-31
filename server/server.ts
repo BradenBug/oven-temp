@@ -1,4 +1,3 @@
-const util = require('util');
 import * as nodeHttps from 'node:https';
 import * as fs from 'fs';
 import type { IncomingMessage } from 'http';
@@ -9,6 +8,7 @@ import { config } from './config';
 
 const usernames = new Map();
 const colors = new Map();
+const chatBuffer = new Array();
 
 // Initialize http server
 const app = express();
@@ -31,6 +31,7 @@ function addUser(ws: WebSocket, username: string) {
         usernames.set(ws, username);
         colors.set(ws, getRandomColor());
         ws.send(constructMessage('userAck', 'true')); 
+        chatBuffer.forEach((chatMessage) => ws.send(chatMessage));
         broadcastMessage(constructMessage('userList',
             `${JSON.stringify(getUsernameList())}`));
     }
@@ -40,7 +41,8 @@ function isValidUsername(ws: WebSocket, username: string) {
     const format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
     return (!format.test(username)
-        && !getUsernameList().includes(username));
+        && !getUsernameList().includes(username)
+        && username.length <= config.maxUsernameLength);
 }
 
 function getUsernameList() {
@@ -65,6 +67,10 @@ function broadcastChatMessage(ws: WebSocket, message: string) {
         + `"color": "${colors.get(ws)}", `
         + `"message": "${message}"}`);
     broadcastMessage(chatMessage); 
+    chatBuffer.push(chatMessage);
+    if (chatBuffer.length > config.chatHistoryLength) {
+        chatBuffer.shift;
+    };
 }
 
 wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
