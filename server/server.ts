@@ -66,11 +66,11 @@ function broadcastChatMessage(ws: WebSocket, message: string) {
         `{"username": "${usernames.get(ws)}", `
         + `"color": "${colors.get(ws)}", `
         + `"message": "${message}"}`);
-    broadcastMessage(chatMessage); 
     chatBuffer.push(chatMessage);
     if (chatBuffer.length > config.chatHistoryLength) {
-        chatBuffer.shift;
+        chatBuffer.shift();
     };
+    broadcastMessage(chatMessage); 
 }
 
 wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
@@ -138,6 +138,7 @@ async function execute_session() {
 // --- Start Server + MQTT ---
 server.listen(config.port, async () => {
     console.log(`🚀 Server started on port ${config.port}`);
+    console.log(config.chatHistoryLength);
     try {
         await execute_session();
     } catch (err) {
