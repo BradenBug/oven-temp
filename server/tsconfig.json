@@ -10,7 +10,8 @@
     "strict": true,                           /* Enable all strict type-checking options. */
     "sourceMap": true,
     /* Advanced Options */
-    "forceConsistentCasingInFileNames": true  /* Disallow inconsistently-cased references to the same file. */
+    "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file. */
+    "types": ["node"]
   },
   "exclude": [
     "dist",

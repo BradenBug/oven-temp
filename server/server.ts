@@ -1,10 +1,19 @@
+const util = require('util');
+const http = require('http');
+import type { IncomingMessage } from 'http';
 import * as express from 'express';
-import * as http from 'http';
-import * as mqtt from 'mqtt';
 import * as WebSocket from 'ws';
+import { mqtt, iot } from 'aws-iot-device-sdk-v2';
 
-const ovenHost = 'mqtt://ughynpsq:9c8iIhKYKG2A@tailor.cloudmqtt.com:14322';
-const ovenPort = '14332';
+const KEY = 'certs/oven.private.key';
+const CERT = 'certs/oven.cert.pem';
+const CA = 'certs/root-CA.crt';
+
+const MQTT_CLIENT_ID = 'sdk-nodejs-server';
+const OVEN_ENDPOINT = 'a1z4kclscqw25d-ats.iot.us-east-2.amazonaws.com';
+const OVEN_PORT = '8883';
+const TOPIC = 'ovenTemp';
+
 const usernames = new Map();
 const colors = new Map();
 
@@ -13,6 +22,7 @@ const app = express();
 // Initialize http server
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
+const decoder = new TextDecoder('utf8');
 
 function constructMessage(type: string, data: string) {
     return `{"type": "${type}", "data": ${data}}`;
@@ -61,7 +71,7 @@ function broadcastChatMessage(ws: WebSocket, message: string) {
     broadcastMessage(chatMessage); 
 }
 
-wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
+wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
     console.log(`Client connected with address ${req.socket.remoteAddress}`);
     if (usernames.has(ws)) {
         ws.send(constructMessage('userAck', 'true')); 
@@ -84,18 +94,61 @@ wss.on('connection', (ws: WebSocket, req: http.IncomingMessage) => {
     });
 });
 
-server.listen(5000, () => {
-    console.log(`Server started on port 5000`);
-    const mqttClient = mqtt.connect(ovenHost + ':' + ovenPort);
+// --- MQTT Setup ---
+let mqttConnection: mqtt.MqttClientConnection;
 
-    mqttClient.on('connect', () => {
-        console.log('Connected to MQTT broker');
-        mqttClient.subscribe('ovenTemp');
-    });
+const on_publish = async (
+    topic: string,
+    payload: ArrayBuffer,
+    dup: boolean,
+    qos: mqtt.QoS,
+    retain: boolean
+) => {
+    const json = decoder.decode(payload);
+    console.log(`Publish received. topic:"${topic}" dup:${dup} qos:${qos} retain:${retain}`);
+    console.log(`Payload: ${json}`);
+    try {
+        const message = JSON.parse(json);
+        broadcastMessage(constructMessage('temp', JSON.stringify(message)));
+    } catch {
+        console.warn('Could not parse MQTT message as JSON');
+    }
+};
 
-    mqttClient.on('message', (topic, message) => {
-        console.log(`Message received: ${message.toString()}`);
-        // Broadcast the temperature
-        broadcastMessage(constructMessage('temp', message.toString()));
-    });
+async function execute_session() {
+    let config_builder = iot.AwsIotMqttConnectionConfigBuilder.new_mtls_builder_from_path(CERT, KEY);
+    config_builder.with_certificate_authority_from_path(undefined, CA);
+    config_builder.with_clean_session(false);
+    config_builder.with_client_id(MQTT_CLIENT_ID);
+    config_builder.with_endpoint(OVEN_ENDPOINT);
+
+    const config = config_builder.build();
+    const client = new mqtt.MqttClient();
+    const mqttConnection = client.new_connection(config);
+
+    await mqttConnection.connect();
+    console.log('✅ Connected to AWS IoT');
+
+    await mqttConnection.subscribe(TOPIC, mqtt.QoS.AtLeastOnce, on_publish);
+    console.log(`✅ Subscribed to topic "${TOPIC}"`);
+}
+
+// --- Start Server + MQTT ---
+server.listen(5000, async () => {
+    console.log('🚀 Server started on port 5000');
+    try {
+        await execute_session();
+    } catch (err) {
+        console.error('Failed to start MQTT session:', err);
+    }
+});
+
+// --- Graceful Shutdown ---
+process.on('SIGINT', async () => {
+    console.log('\n🛑 Shutting down...');
+    if (mqttConnection) {
+        await mqttConnection.disconnect();
+        console.log('Disconnected from AWS IoT');
+    }
+    process.exit();
 });
