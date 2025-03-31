@@ -2,8 +2,8 @@ const util = require('util');
 import * as nodeHttps from 'node:https';
 import * as fs from 'fs';
 import type { IncomingMessage } from 'http';
-import * as express from 'express';
-import * as WebSocket from 'ws';
+import express from 'express';
+import WebSocket from 'ws';
 import { mqtt, iot } from 'aws-iot-device-sdk-v2';
 import { config } from './config';
 
@@ -48,7 +48,7 @@ function getUsernameList() {
 }
 
 function broadcastMessage(message: string) {
-    wss.clients.forEach((wsClient: WebSocket) => {
+    wss.clients.forEach((wsClient: InstanceType<typeof WebSocket>) => {
         if (wsClient.readyState === WebSocket.OPEN) {
             wsClient.send(message);
         }
