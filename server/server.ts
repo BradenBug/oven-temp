@@ -4,15 +4,7 @@ import type { IncomingMessage } from 'http';
 import * as express from 'express';
 import * as WebSocket from 'ws';
 import { mqtt, iot } from 'aws-iot-device-sdk-v2';
-
-const KEY = 'certs/oven.private.key';
-const CERT = 'certs/oven.cert.pem';
-const CA = 'certs/root-CA.crt';
-
-const MQTT_CLIENT_ID = 'sdk-nodejs-server';
-const OVEN_ENDPOINT = 'a1z4kclscqw25d-ats.iot.us-east-2.amazonaws.com';
-const OVEN_PORT = '8883';
-const TOPIC = 'ovenTemp';
+import { config } from './config';
 
 const usernames = new Map();
 const colors = new Map();
@@ -116,26 +108,26 @@ const on_publish = async (
 };
 
 async function execute_session() {
-    let config_builder = iot.AwsIotMqttConnectionConfigBuilder.new_mtls_builder_from_path(CERT, KEY);
-    config_builder.with_certificate_authority_from_path(undefined, CA);
+    let config_builder = iot.AwsIotMqttConnectionConfigBuilder.new_mtls_builder_from_path(config.iotSSL.cert, config.iotSSL.key);
+    config_builder.with_certificate_authority_from_path(undefined, config.iotSSL.ca);
     config_builder.with_clean_session(false);
-    config_builder.with_client_id(MQTT_CLIENT_ID);
-    config_builder.with_endpoint(OVEN_ENDPOINT);
+    config_builder.with_client_id(config.mqttClientId);
+    config_builder.with_endpoint(config.iotEndpoint);
 
-    const config = config_builder.build();
+    const mqttConfig = config_builder.build();
     const client = new mqtt.MqttClient();
-    const mqttConnection = client.new_connection(config);
+    const mqttConnection = client.new_connection(mqttConfig);
 
     await mqttConnection.connect();
     console.log('✅ Connected to AWS IoT');
 
-    await mqttConnection.subscribe(TOPIC, mqtt.QoS.AtLeastOnce, on_publish);
-    console.log(`✅ Subscribed to topic "${TOPIC}"`);
+    await mqttConnection.subscribe(config.topic, mqtt.QoS.AtLeastOnce, on_publish);
+    console.log(`✅ Subscribed to topic "${config.topic}"`);
 }
 
 // --- Start Server + MQTT ---
-server.listen(5000, async () => {
-    console.log('🚀 Server started on port 5000');
+server.listen(config.port, async () => {
+    console.log(`🚀 Server started on port ${config.port}`);
     try {
         await execute_session();
     } catch (err) {
