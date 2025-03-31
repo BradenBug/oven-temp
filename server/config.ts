@@ -16,5 +16,6 @@ export const config = {
         cert: process.env.SERVER_CERT_PATH!,
     },
     maxUsernameLength: 26,
+    maxMessageLength: 250,
     chatHistoryLength: 50
 };

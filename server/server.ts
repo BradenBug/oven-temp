@@ -62,15 +62,16 @@ function getRandomColor() {
 }
 
 function broadcastChatMessage(ws: WebSocket, message: string) {
-    const chatMessage = constructMessage('chat',
-        `{"username": "${usernames.get(ws)}", `
-        + `"color": "${colors.get(ws)}", `
-        + `"message": "${message}"}`);
-    chatBuffer.push(chatMessage);
-    if (chatBuffer.length > config.chatHistoryLength) {
-        chatBuffer.shift();
-    };
-    broadcastMessage(chatMessage); 
+    if (message.length <= config.maxMessageLength) {
+        const chatMessage = constructMessage('chat',
+            `{"username": "${usernames.get(ws)}", `
+            + `"color": "${colors.get(ws)}", `
+            + `"message": "${message}"}`);
+        if (chatBuffer.push(chatMessage) > config.chatHistoryLength) {
+            chatBuffer.shift;
+        };
+        broadcastMessage(chatMessage); 
+    }
 }
 
 wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
