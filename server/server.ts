@@ -1,5 +1,5 @@
 const util = require('util');
-import * as https from 'https';
+import * as nodeHttps from 'node:https';
 import * as fs from 'fs';
 import type { IncomingMessage } from 'http';
 import * as express from 'express';
@@ -16,7 +16,7 @@ const options = {
     key: fs.readFileSync(config.serverSSL.key),
     cert: fs.readFileSync(config.serverSSL.cert)
 };
-const server = https.createServer(options, app);
+const server = nodeHttps.createServer(options, app);
 const wss = new WebSocket.Server({ server });
 const decoder = new TextDecoder('utf8');
 
@@ -120,7 +120,7 @@ async function execute_session() {
 
     const mqttConfig = config_builder.build();
     const client = new mqtt.MqttClient();
-    const mqttConnection = client.new_connection(mqttConfig);
+    mqttConnection = client.new_connection(mqttConfig);
 
     await mqttConnection.connect();
     console.log('✅ Connected to AWS IoT');
