@@ -6,9 +6,9 @@ import WebSocket from 'ws';
 import { mqtt, iot } from 'aws-iot-device-sdk-v2';
 import { config } from './config';
 
-const usernames = new Map();
-const colors = new Map();
-const chatBuffer = new Array();
+// const usernames = new Map();
+// const colors = new Map();
+// const chatBuffer = new Array();
 
 // Initialize http server
 const app = express();
@@ -24,30 +24,30 @@ function constructMessage(type: string, data: string) {
     return `{"type": "${type}", "data": ${data}}`;
 }
 
-function addUser(ws: WebSocket, username: string) {
-    if (!isValidUsername(ws, username)) {
-        ws.send(constructMessage('userAck', 'false'));
-    } else {
-        usernames.set(ws, username);
-        colors.set(ws, getRandomColor());
-        ws.send(constructMessage('userAck', 'true')); 
-        chatBuffer.forEach((chatMessage) => ws.send(chatMessage));
-        broadcastMessage(constructMessage('userList',
-            `${JSON.stringify(getUsernameList())}`));
-    }
-}
+// function addUser(ws: WebSocket, username: string) {
+//     if (!isValidUsername(ws, username)) {
+//         ws.send(constructMessage('userAck', 'false'));
+//     } else {
+//         usernames.set(ws, username);
+//         colors.set(ws, getRandomColor());
+//         ws.send(constructMessage('userAck', 'true')); 
+//         chatBuffer.forEach((chatMessage) => ws.send(chatMessage));
+//         broadcastMessage(constructMessage('userList',
+//             `${JSON.stringify(getUsernameList())}`));
+//     }
+// }
 
-function isValidUsername(ws: WebSocket, username: string) {
-    const format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+// function isValidUsername(ws: WebSocket, username: string) {
+//     const format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
-    return (!format.test(username)
-        && !getUsernameList().includes(username)
-        && username.length <= config.maxUsernameLength);
-}
+//     return (!format.test(username)
+//         && !getUsernameList().includes(username)
+//         && username.length <= config.maxUsernameLength);
+// }
 
-function getUsernameList() {
-    return Array.from(usernames.values());
-}
+// function getUsernameList() {
+//     return Array.from(usernames.values());
+// }
 
 function broadcastMessage(message: string) {
     wss.clients.forEach((wsClient: InstanceType<typeof WebSocket>) => {
@@ -57,44 +57,44 @@ function broadcastMessage(message: string) {
     });
 }
 
-function getRandomColor() {
-    return `hsla(${Math.random() * 360}, 100%, 50%, 1)`;
-}
+// function getRandomColor() {
+//     return `hsla(${Math.random() * 360}, 100%, 50%, 1)`;
+// }
 
-function broadcastChatMessage(ws: WebSocket, message: string) {
-    if (message.length <= config.maxMessageLength) {
-        const chatMessage = constructMessage('chat',
-            `{"username": "${usernames.get(ws)}", `
-            + `"color": "${colors.get(ws)}", `
-            + `"message": "${message}"}`);
-        if (chatBuffer.push(chatMessage) > config.chatHistoryLength) {
-            chatBuffer.shift;
-        };
-        broadcastMessage(chatMessage); 
-    }
-}
+// function broadcastChatMessage(ws: WebSocket, message: string) {
+//     if (message.length <= config.maxMessageLength) {
+//         const chatMessage = constructMessage('chat',
+//             `{"username": "${usernames.get(ws)}", `
+//             + `"color": "${colors.get(ws)}", `
+//             + `"message": "${message}"}`);
+//         if (chatBuffer.push(chatMessage) > config.chatHistoryLength) {
+//             chatBuffer.shift;
+//         };
+//         broadcastMessage(chatMessage); 
+//     }
+// }
 
 wss.on('connection', (ws: WebSocket, req: IncomingMessage) => {
     console.log(`Client connected with address ${req.socket.remoteAddress}`);
-    if (usernames.has(ws)) {
-        ws.send(constructMessage('userAck', 'true')); 
-    }
-    ws.on('message', (message) => {
-        var jsonMessage = JSON.parse(message.toString());
-        if (jsonMessage['type'] === 'username') {
-            addUser(ws, jsonMessage['data']);
-        } else if (jsonMessage['type'] === 'message') {
-            if (usernames.has(ws)) {
-                broadcastChatMessage(ws, jsonMessage['data']);
-            }
-        }
-    });
+    // if (usernames.has(ws)) {
+    //     ws.send(constructMessage('userAck', 'true')); 
+    // }
+    // ws.on('message', (message) => {
+    //     var jsonMessage = JSON.parse(message.toString());
+    //     if (jsonMessage['type'] === 'username') {
+    //         addUser(ws, jsonMessage['data']);
+    //     } else if (jsonMessage['type'] === 'message') {
+    //         if (usernames.has(ws)) {
+    //             broadcastChatMessage(ws, jsonMessage['data']);
+    //         }
+    //     }
+    // });
 
-    ws.on('close', () => {
-        usernames.delete(ws);
-        broadcastMessage(constructMessage(
-            'userList', `${JSON.stringify(getUsernameList())}`));
-    });
+    // ws.on('close', () => {
+    //     // usernames.delete(ws);
+    //     broadcastMessage(constructMessage(
+    //         'userList', `${JSON.stringify(getUsernameList())}`));
+    // });
 });
 
 // --- MQTT Setup ---
