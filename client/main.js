@@ -1,9 +1,10 @@
-const host = 'ws://3.21.39.82';
-const port = '5000';
+const host = 'wss://api.bradenwicker.com/oven-temp/';
+const port = '443';
 var curentTempF = 80;
 var curentTempC = 26.7;
 var userList = [];
 var userListUpdated = false;
+var scrollDown = true;
 const escMap = new Map([
     ['&', '&amp;'],
     ['<', '&lt;'], 
@@ -16,63 +17,85 @@ const escMap = new Map([
 
 const ws = new WebSocket(host + ':' + port);
 
-$('#username-form').on('submit', requestUsername);
+$(document).ready(function() {
+    $('#fbutton').addClass('active');
+});
+
+// $('#username-form').on('submit', requestUsername);
 $('#fbutton').on('click', () => selectTemp(currentTempF));
 $('#cbutton').on('click', () => selectTemp(currentTempC));
-$('#chat-button').on('click', sendMessage);
-$('#user-list-button').on('click', createUserListView);
+// $('#chat-button').on('click', sendMessage);
+// $('#chatbox').on('scroll', setChatScroll);
+// $('#user-list-button').on('click', createUserListView);
 
 ws.onmessage = (message) => {
+    console.log(message);
     var jsonMessage = JSON.parse(message.data);
 
-    if (jsonMessage['type'] === 'userAck') {
-        validateUsername(jsonMessage['data']);
-    } else if (jsonMessage['type'] === 'temp') {
+    if (jsonMessage['type'] == 'temp') {
         updateTemp(jsonMessage['data']);
-    } else if (jsonMessage['type'] === 'chat') {
-        updateChat(jsonMessage['data']);
-    } else if (jsonMessage['type'] === 'userList') {
-        updateUserData(jsonMessage['data']);
     }
+
+    // if (jsonMessage['type'] === 'userAck') {
+    //     validateUsername(jsonMessage['data']);
+    // } else if (jsonMessage['type'] === 'temp') {
+    //     updateTemp(jsonMessage['data']);
+    // } else if (jsonMessage['type'] === 'chat') {
+    //     updateChat(jsonMessage['data']);
+    // } else if (jsonMessage['type'] === 'userList') {
+    //     updateUserData(jsonMessage['data']);
+    // }
 }
 
-function requestUsername() {
-    let username = $('#username-input').val();
-    ws.send(`{"type": "username", "data": "${username}"}`);
-    return false;
-}
+// function requestUsername() {
+//     let username = $('#username-input').val();
+//     ws.send(`{"type": "username", "data": "${username}"}`);
+//     return false;
+// }
 
 function selectTemp(currentTemp) {
     $('#temp').text(`${currentTemp}`);
+    // get rid of the focus
+    $('#fbutton').blur();
+    $('#cbutton').blur();
 }
 
-function sendMessage() {
-    let message = sanitize($('#chat-input').val());
-    if (message.length > 0) {
-        ws.send(constructMessage('message', message)); 
-        $('#chat-input').val('');
-        $('#chat-input').focus();
-    }
-}
+// function sendMessage() {
+//     let message = sanitize($('#chat-input').val());
+//     if (message.length > 0) {
+//         ws.send(constructMessage('message', message)); 
+//         $('#chat-input').val('');
+//         $('#chat-input').focus();
+//     }
+// }
 
-function createUserListView() {
-    if (userListUpdated) {
-        $('#user-list').empty();
-        userList.forEach((username) => {
-            $('#user-list').append(`<li class="list-group-item">${username}</li>`)
-        });
-        userListUpdated = false;
-    }
-}
+// function setChatScroll() {
+//     if ($('#chatbox').scrollTop() + $('#chatbox').innerHeight()
+//         >= $('#chatbox')[0].scrollHeight) {
+//         scrollDown = true;
+//     } else {
+//         scrollDown = false;
+//     }
+// }
 
-const validateUsername = (ackValue) => {
-    if (ackValue === true) {
-        switchPage('main-page', 'intro-page');
-        $(`#intro-page`).empty();
-    } else {
-        $('#username-input').addClass('is-invalid');
-    }
-}
+// function createUserListView() {
+//     if (userListUpdated) {
+//         $('#user-list').empty();
+//         userList.forEach((username) => {
+//             $('#user-list').append(`<li class="list-group-item">${username}</li>`)
+//         });
+//         userListUpdated = false;
+//     }
+// }
+
+// const validateUsername = (ackValue) => {
+//     if (ackValue === true) {
+//         switchPage('main-page', 'intro-page');
+//         $(`#intro-page`).empty();
+//     } else {
+//         $('#username-input').addClass('is-invalid');
+//     }
+// }
 
 const updateTemp = (data) => {
     currentTempF = data.f;
@@ -85,39 +108,42 @@ const updateTemp = (data) => {
     }
 }
 
-const updateChat = (chatData) => {
-    $('#chatbox').append(`<div class="row justify-content-start no-gutters">`
-        + `<p style="color: ${chatData.color}">${chatData.username}:&nbsp;</p>`
-        + `<p>${chatData.message}</p>`
-        + `</div>`);
-    $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
-}
+// const updateChat = (chatData) => {
+//     $('#chatbox').append(`<div class="row justify-content-start no-gutters">`
+//         + `<p style="color: ${chatData.color}">${chatData.username}:&nbsp;</p>`
+//         + `<p>${chatData.message}</p>`
+//         + `</div>`);
+//     // scroll to the bottom if not scrolled up
+//     if (scrollDown) {
+//         $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
+//     }
+// }
 
-const updateUserData = (newUserList) => {
-    $('#user-count').text(newUserList.length);
-    userList = newUserList;
-    userListUpdated = true;
-}
+// const updateUserData = (newUserList) => {
+//     $('#user-count').text(newUserList.length);
+//     userList = newUserList;
+//     userListUpdated = true;
+// }
 
 const constructMessage = (type, data) =>
     `{"type": "${type}", "data": "${data}"}`;
 
-const switchPage = (shown, hidden) => {
-    $(`#${shown}`).css('display', 'block');
-    $(`#${hidden}`).css('display', 'none');
+// const switchPage = (shown, hidden) => {
+//     $(`#${shown}`).css('display', 'block');
+//     $(`#${hidden}`).css('display', 'none');
     
-    $('#chat-input').keyup((event) => {
-        if ($('#chat-input').is(':focus') && event.key === 'Enter') {
-            sendMessage();
-        }
-    })
+//     $('#chat-input').keyup((event) => {
+//         if ($('#chat-input').is(':focus') && event.key === 'Enter') {
+//             sendMessage();
+//         }
+//     })
 
-    return false;
-}
+//     return false;
+// }
 
-function sanitize(text) {
-    const reg = /[&<>"'/]/ig;
-    return text.replace(reg, (match) => {
-        return escMap.get(match);
-    });
-}
+// function sanitize(text) {
+//     const reg = /[&<>"'/]/ig;
+//     return text.replace(reg, (match) => {
+//         return escMap.get(match);
+//     });
+// }

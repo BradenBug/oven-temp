@@ -1,19 +1,36 @@
-html, body {
+.row {
+    margin: 0;
+}
+
+html, body, .page {
     height: 100vh;
-    height: 100%;
+}
+
+.card, .card-body {
+    height: 75%;
 }
 
 main {
-    height: 70vh;
-    height: 70%;
+    height: 80%;
+    max-height: 80%;
+    overflow: hidden;
 }
 
-.card, .card-body{
-    height: 100vh;
-    height: 100%;
+header {
+    height: 20%;
+    max-height: 20%;
+    overflow: hidden;
 }
 
 .list-group {
     max-height: 200px;
     overflow-y: auto;
+}
+
+.h-80 {
+    height: 80%;
+}
+
+.h-20 {
+    height: 20%;
 }
