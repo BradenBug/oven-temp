@@ -13,7 +13,7 @@
     "url": "https://github.com/BradenBug/oven-temp"
   },
   "dependencies": {
-    "aws-iot-device-sdk-v2": "^1.21.3",
+    "aws-iot-device-sdk-v2": "^1.23.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "util": "^0.12.5",
