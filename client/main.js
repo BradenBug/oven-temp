@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import 'bootstrap';
+import { updateTemperatureText } from './model-viewer.js';
 
 const host = 'wss://api.bradenwicker.com/oven-temp/';
 const port = '443';
@@ -25,8 +26,14 @@ $(document).ready(function() {
 });
 
 // $('#username-form').on('submit', requestUsername);
-$('#fbutton').on('click', () => selectTemp(currentTempF));
-$('#cbutton').on('click', () => selectTemp(currentTempC));
+$('#fbutton').on('click', () => {
+    selectTemp(currentTempF);
+    updateTemperatureText(currentTempF, 'F');
+});
+$('#cbutton').on('click', () => {
+    selectTemp(currentTempC);
+    updateTemperatureText(currentTempC, 'C');
+});
 // $('#chat-button').on('click', sendMessage);
 // $('#chatbox').on('scroll', setChatScroll);
 // $('#user-list-button').on('click', createUserListView);
@@ -59,8 +66,8 @@ ws.onmessage = (message) => {
 function selectTemp(currentTemp) {
     $('#temp').text(`${currentTemp}`);
     // get rid of the focus
-    $('#fbutton').blur();
-    $('#cbutton').blur();
+    $('#fbutton').on('blur');
+    $('#cbutton').on('blur');
 }
 
 // function sendMessage() {
@@ -104,10 +111,20 @@ const updateTemp = (data) => {
     currentTempF = data.f;
     currentTempC = data.c;
 
+    // if (selectedScale = 'F') {
+    //     selectTemp(currentTempF);
+    //     // updateTemperatureText(currentTempF, 'F');
+    // } else {
+    //     selectTemp(currentTempC);
+    //     // updateTemperatureText(currentTempC, 'C');
+    // }
+
     if ($('#fbutton').hasClass('active')) {
         selectTemp(currentTempF);
+        updateTemperatureText(currentTempF, 'F');
     } else if ($('#cbutton').hasClass('active')) {
         selectTemp(currentTempC);
+        updateTemperatureText(currentTempC, 'C');
     }
 }
 

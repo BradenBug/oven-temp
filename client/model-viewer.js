@@ -1,18 +1,31 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+import { AnaglyphEffect } from 'three/addons/effects/AnaglyphEffect.js';
 
 // Scene setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 2000);
 const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+const effect = new AnaglyphEffect(renderer, 1000, 1000);
+
+// Loaders and models
+const loader = new GLTFLoader();
+const fontLoader = new FontLoader();
+let model;
+let textMesh;
+
+// Base rotation for model to face forward
+const BASE_ROTATION_Y = -Math.PI / 2;
 
 // Set renderer size and add to DOM
 const container = document.getElementById('model-container');
 const size = 400;
-renderer.setSize(size, size);
+effect.setSize(size, size);
 container.appendChild(renderer.domElement);
 
-// Lighting (important!)
+// Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 1);
 scene.add(ambientLight);
 
@@ -20,17 +33,12 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.set(1, 1, 5);
 scene.add(directionalLight);
 
-// Additional light from the back
 const backLight = new THREE.DirectionalLight(0xffffff, 0.3);
 backLight.position.set(-5, -5, -5);
 scene.add(backLight);
 
 // Camera position
 camera.position.z = 5;
-
-// Load model
-const loader = new GLTFLoader();
-let model;
 
 loader.load(
   'models/oven.glb',
@@ -65,7 +73,12 @@ loader.load(
     const scale = 3 / maxDim;
     model.scale.setScalar(scale);
 
+    // Set base rotation to face forward (adjust as needed)
+    model.rotation.y = BASE_ROTATION_Y;
+
     console.log('Model loaded successfully');
+
+    updateTemperatureText(0, 'F');
   },
   (progress) => {
     console.log('Loading:', Math.round(progress.loaded / progress.total * 100) + '%');
@@ -87,8 +100,8 @@ window.addEventListener('mousemove', (event) => {
   mouseX = (event.clientX / window.innerWidth) * 2 - 1;
   mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
 
-  // Calculate target rotation based on mouse position
-  targetRotationY = mouseX * Math.PI * 0.3 + 180 // Rotate left/right (Y axis)
+  // Calculate target rotation based on mouse position (add base rotation)
+  targetRotationY = mouseX * Math.PI * 0.3 + BASE_ROTATION_Y; // Rotate left/right (Y axis)
   targetRotationX = -mouseY * Math.PI * 0.15; // Rotate up/down (X axis)
 });
 
@@ -102,7 +115,7 @@ function animate() {
     model.rotation.x += (targetRotationX - model.rotation.x) * 0.05;
   }
 
-  renderer.render(scene, camera);
+  effect.render(scene, camera);
 }
 
 animate();
@@ -112,5 +125,47 @@ window.addEventListener('resize', () => {
   // Keep the renderer square
   const containerWidth = container.offsetWidth;
   const newSize = Math.min(containerWidth, 400);
-  renderer.setSize(newSize, newSize);
+  effect.setSize(newSize, newSize);
 });
+
+export function updateTemperatureText(temp, unit) {
+  if (!model) return;
+
+  const text = `${Math.round(temp)}°${unit}`;
+
+  // Remove ALL existing text meshes (handles race conditions from async font loading)
+  const textMeshesToRemove = model.children.filter(child =>
+    child.type === 'Mesh' && child.geometry.type === 'TextGeometry'
+  );
+  textMeshesToRemove.forEach(mesh => {
+    model.remove(mesh);
+    if (mesh.geometry) mesh.geometry.dispose();
+    if (mesh.material) mesh.material.dispose();
+  });
+
+  fontLoader.load(
+    'https://threejs.org/examples/fonts/helvetiker_regular.typeface.json',
+    (font) => {
+      const textGeometry = new TextGeometry(text, {
+        font: font,
+        size: 0.5,
+        depth: 0.1,
+      });
+
+      const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+      textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+      // Center the text geometry
+      textGeometry.computeBoundingBox();
+      const textWidth = textGeometry.boundingBox.max.x - textGeometry.boundingBox.min.x;
+      // Position text in local coordinates (X axis = forward after rotation)
+      textMesh.position.set(0.5, 0, textWidth / 2);
+
+      // Rotate text to face forward in model's local space
+      textMesh.rotation.y = -BASE_ROTATION_Y;
+
+      // Add text as child of model
+      model.add(textMesh);
+    }
+  );
+}
