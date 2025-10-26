@@ -6,9 +6,9 @@ import { AnaglyphEffect } from 'three/addons/effects/AnaglyphEffect.js';
 
 // Scene setup
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 2000);
+const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 2000);
 const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-const effect = new AnaglyphEffect(renderer, 1000, 1000);
+const effect = new AnaglyphEffect(renderer); 
 
 // Loaders and models
 const loader = new GLTFLoader();
@@ -21,8 +21,8 @@ const BASE_ROTATION_Y = -Math.PI / 2;
 
 // Set renderer size and add to DOM
 const container = document.getElementById('model-container');
-const size = 400;
-effect.setSize(size, size);
+const CONTAINZER_SIZE = 600;
+effect.setSize(CONTAINZER_SIZE, CONTAINZER_SIZE);
 container.appendChild(renderer.domElement);
 
 // Lighting
@@ -38,11 +38,15 @@ backLight.position.set(-5, -5, -5);
 scene.add(backLight);
 
 // Camera position
-camera.position.z = 5;
+camera.position.z = 8;
 
 loader.load(
   'models/oven.glb',
   (gltf) => {
+    if (model) {
+      model.dispose()
+    }
+
     model = gltf.scene;
 
     // Fix material transparency
@@ -124,7 +128,7 @@ animate();
 window.addEventListener('resize', () => {
   // Keep the renderer square
   const containerWidth = container.offsetWidth;
-  const newSize = Math.min(containerWidth, 400);
+  const newSize = Math.min(containerWidth, CONTAINZER_SIZE);
   effect.setSize(newSize, newSize);
 });
 
