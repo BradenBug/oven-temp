@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>About - Braden's Oven Temperature</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; form-action 'self';
+      script-src 'self';
+      connect-src 'self' https://threejs.org/examples/fonts/ blob: wss://api.bradenwicker.com/oven-temp/:443; img-src 'self' https://* data: blob:; child-src 'self';
+      style-src 'unsafe-inline' 'self' https://stackpath.bootstrapcdn.com/bootstrap/;">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+    <div class="page">
+      <main role="main">
+        <div class="container-fluid h-100">
+          <div class="row justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6">
+              <div class="about-content">
+                <h1 class="text-center mb-4" style="color: white;">About This Project</h1>
+
+                <div class="text-content" style="color: white; line-height: 1.8;">
+                  <p>
+                    This is an IoT oven temperature monitoring application that displays real-time
+                    temperature readings from an AWS IoT-connected device.
+                  </p>
+
+                  <h3 class="mt-4 mb-3">How It Works</h3>
+                  <ul>
+                    <li>Temperature sensor in the oven sends data to AWS IoT Core via MQTT</li>
+                    <li>Server receives MQTT messages and broadcasts to connected clients via WebSocket</li>
+                    <li>Client displays live temperature data with a 3D oven visualization</li>
+                  </ul>
+
+                  <h3 class="mt-4 mb-3">Technologies Used</h3>
+                  <ul>
+                    <li>Three.js for 3D graphics</li>
+                    <li>WebSocket for real-time communication</li>
+                    <li>AWS IoT Core for device connectivity</li>
+                  </ul>
+
+                  <h3 class="mt-4 mb-3">Credits</h3>
+                  <ul>
+                    <li>Oven model from R3indeer on Sketchfab: <a href="https://sketchfab.com/3d-models/oven-f4246ee9a31240d1b87eb33c7ec24302">link</a></li>
+                  </ul>
+                </div>
+
+                <div class="text-center mt-5">
+                  <a href="/oven-temp/" class="btn btn-light btn-lg">
+                    ← Back to Oven
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

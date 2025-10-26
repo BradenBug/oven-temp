@@ -39,10 +39,11 @@
         </div>
       </header> -->
       <main role="main">
+        <div class="container-fluid h-100">
           <div class="row justify-content-center align-items-center h-100">
-            <div class="col-lg-12 py-4">
-              <div id="model-container" style="width: 600px; height: 600px; margin: 0 auto;"></div>
-              <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8 text-center">
+              <div id="model-container"></div>
+              <div>
                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                   <label id="fbutton" class="btn btn-info active">
                     <input type="radio" name="unit" id="fahrenheit"> F
@@ -51,7 +52,10 @@
                     <input type="radio" name="unit" id="celcius"> C
                   </label>
                 </div>
+              </div>
             </div>
+          </div>
+        </div>
             <!-- <div class="col-lg-4 h-80">
               <nav class="navbar navbar-light">
                 <a class="navbar-brand">
@@ -80,6 +84,11 @@
             </div> -->
           </div>
         </div>
+
+        <!-- About button -->
+        <a href="/oven-temp/about" id="about-btn" aria-label="About">
+          <span>?</span>
+        </a>
       </main>
     </div>
       

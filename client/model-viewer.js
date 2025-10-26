@@ -4,6 +4,11 @@ import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { AnaglyphEffect } from 'three/addons/effects/AnaglyphEffect.js';
 
+// Constants
+const MAX_CONTAINER_WIDTH = 600;
+// Base rotation for model to face forward
+const BASE_ROTATION_Y = -Math.PI / 2;
+
 // Scene setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 2000);
@@ -16,13 +21,18 @@ const fontLoader = new FontLoader();
 let model;
 let textMesh;
 
-// Base rotation for model to face forward
-const BASE_ROTATION_Y = -Math.PI / 2;
-
 // Set renderer size and add to DOM
 const container = document.getElementById('model-container');
-const CONTAINZER_SIZE = 600;
-effect.setSize(CONTAINZER_SIZE, CONTAINZER_SIZE);
+
+// Calculate size based on container dimensions
+function getContainerSize() {
+  const containerWidth = container.offsetWidth;
+  const size = Math.min(containerWidth, MAX_CONTAINER_WIDTH);
+  return size;
+}
+
+const initialSize = getContainerSize();
+effect.setSize(initialSize, initialSize);
 container.appendChild(renderer.domElement);
 
 // Lighting
@@ -82,7 +92,7 @@ loader.load(
 
     console.log('Model loaded successfully');
 
-    updateTemperatureText(0, 'F');
+    updateTemperatureText(100, 'F');
   },
   (progress) => {
     console.log('Loading:', Math.round(progress.loaded / progress.total * 100) + '%');
@@ -126,9 +136,7 @@ animate();
 
 // Handle window resize
 window.addEventListener('resize', () => {
-  // Keep the renderer square
-  const containerWidth = container.offsetWidth;
-  const newSize = Math.min(containerWidth, CONTAINZER_SIZE);
+  const newSize = getContainerSize();
   effect.setSize(newSize, newSize);
 });
 
@@ -152,7 +160,7 @@ export function updateTemperatureText(temp, unit) {
     (font) => {
       const textGeometry = new TextGeometry(text, {
         font: font,
-        size: 0.5,
+        size: 0.25,
         depth: 0.1,
       });
 
@@ -163,7 +171,7 @@ export function updateTemperatureText(temp, unit) {
       textGeometry.computeBoundingBox();
       const textWidth = textGeometry.boundingBox.max.x - textGeometry.boundingBox.min.x;
       // Position text in local coordinates (X axis = forward after rotation)
-      textMesh.position.set(0.5, 0, textWidth / 2);
+      textMesh.position.set(0.5, 0.25, textWidth / 2);
 
       // Rotate text to face forward in model's local space
       textMesh.rotation.y = -BASE_ROTATION_Y;
