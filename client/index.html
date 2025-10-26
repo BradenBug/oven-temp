@@ -6,8 +6,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; form-action 'self';
-      script-src 'self' https://code.jquery.com/jquery-3.3.1.slim.min.js https://stackpath.bootstrapcdn.com/bootstrap/;
-      connect-src wss://api.bradenwicker.com/oven-temp/:443; img-src 'self' https://* data:; child-src 'self';
+      script-src 'self';
+      connect-src 'self' blob: wss://api.bradenwicker.com/oven-temp/:443; img-src 'self' https://* data: blob:; child-src 'self';
       style-src 'unsafe-inline' 'self' https://stackpath.bootstrapcdn.com/bootstrap/;">
 
     <!-- Bootstrap CSS -->
@@ -43,7 +43,7 @@
       </header>
       <main role="main">
         <div class="container-fluid h-100">
-          <div class="row justify-content-center align-items-center h-100"> 
+          <div class="row justify-content-center align-items-center h-100">
             <div class="col-lg-4 py-4 h-20">
               <h2 id="temp" class="text-center">0</h2>
               <div class="row justify-content-center">
@@ -89,10 +89,7 @@
     </div>
       
    
-    <!-- jQuery and Bootstrap -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
     <!-- My script :) -->
-    <script src="main.js"></script>
+    <script type="module" src="main.js"></script>
   </body>
 </html>

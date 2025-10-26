@@ -1,7 +1,10 @@
+import $ from 'jquery';
+import 'bootstrap';
+
 const host = 'wss://api.bradenwicker.com/oven-temp/';
 const port = '443';
-var curentTempF = 80;
-var curentTempC = 26.7;
+var currentTempF = 80;
+var currentTempC = 26.7;
 var userList = [];
 var userListUpdated = false;
 var scrollDown = true;
