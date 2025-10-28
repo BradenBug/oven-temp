@@ -58,6 +58,7 @@ html, body, .page {
     padding: 40px;
     border-radius: 10px;
     backdrop-filter: blur(10px);
+    margin: 20px 0;
 }
 
 .text-content ul {
@@ -77,6 +78,7 @@ html, body, .page {
 
     .about-content {
         padding: 20px;
+        margin: 10px;
     }
 
     #about-btn {
@@ -98,6 +100,13 @@ html, body, .page {
 main {
     height: 100vh;
     overflow: hidden;
+}
+
+/* Allow scrolling on about page */
+body:has(.about-content) main {
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
 }
 
 header {

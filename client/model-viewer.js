@@ -93,8 +93,6 @@ loader.load(
     model.rotation.y = BASE_ROTATION_Y;
 
     console.log('Model loaded successfully');
-
-    updateTemperatureText(0, 'F');
   },
   (progress) => {
     console.log('Loading:', Math.round(progress.loaded / progress.total * 100) + '%');
