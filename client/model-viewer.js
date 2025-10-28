@@ -3,6 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { AnaglyphEffect } from 'three/addons/effects/AnaglyphEffect.js';
+import HolographicMaterial from "./holographic-material";
 
 // Constants
 const MAX_CONTAINER_WIDTH = 600;
@@ -20,6 +21,7 @@ const loader = new GLTFLoader();
 const fontLoader = new FontLoader();
 let model;
 let textMesh;
+const textMaterial = new HolographicMaterial({fresnelAmount: 1.1, blendMode: THREE.AdditiveBlending});
 
 // Set renderer size and add to DOM
 const container = document.getElementById('model-container');
@@ -92,7 +94,7 @@ loader.load(
 
     console.log('Model loaded successfully');
 
-    updateTemperatureText(100, 'F');
+    updateTemperatureText(0, 'F');
   },
   (progress) => {
     console.log('Loading:', Math.round(progress.loaded / progress.total * 100) + '%');
@@ -129,6 +131,8 @@ function animate() {
     model.rotation.x += (targetRotationX - model.rotation.x) * 0.05;
   }
 
+  textMaterial.update()
+
   effect.render(scene, camera);
 }
 
@@ -161,10 +165,9 @@ export function updateTemperatureText(temp, unit) {
       const textGeometry = new TextGeometry(text, {
         font: font,
         size: 0.25,
-        depth: 0.1,
+        depth: 0.07,
       });
 
-      const textMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
       textMesh = new THREE.Mesh(textGeometry, textMaterial);
 
       // Center the text geometry
