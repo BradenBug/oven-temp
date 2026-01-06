@@ -89,7 +89,7 @@ loader.load(
     const scale = 3 / maxDim;
     model.scale.setScalar(scale);
 
-    // Set base rotation to face forward (adjust as needed)
+    // Set base rotation to face forward
     model.rotation.y = BASE_ROTATION_Y;
 
     // Initialize text
@@ -109,7 +109,7 @@ loader.load(
 let mouseX = 0;
 let mouseY = 0;
 let targetRotationX = 0;
-let targetRotationY = 0;
+let targetRotationY = BASE_ROTATION_Y;
 
 window.addEventListener('pointermove', (event) => {
   // Normalize mouse position to -1 to 1
