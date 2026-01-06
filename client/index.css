@@ -1,3 +1,4 @@
+/* Base layout */
 .row {
     margin: 0;
 }
@@ -8,7 +9,11 @@ html, body, .page {
     overflow: hidden;
 }
 
-/* Allow scrolling on about page */
+main {
+    height: 100%;
+}
+
+/* About page scroll override */
 html:has(.about-content) {
     overflow-y: auto;
     height: auto;
@@ -29,11 +34,11 @@ html:has(.about-content) main {
     aspect-ratio: 1 / 1;
 }
 
+/* Pull the F/C toggle buttons up to overlap with the 3D model. */
 #model-container + div {
     margin-top: -150px;
 }
 
-/* About button */
 #about-btn {
     position: fixed;
     bottom: 20px;
@@ -67,7 +72,6 @@ html:has(.about-content) main {
     color: rgba(255, 255, 255, 1);
 }
 
-/* About page */
 .about-content {
     background-color: rgba(255, 255, 255, 0.1);
     padding: 40px;
@@ -85,7 +89,7 @@ html:has(.about-content) main {
     color: white;
 }
 
-/* Responsive padding for mobile */
+/* Responsive mobile adjustments */
 @media (max-width: 768px) {
     #model-container {
         max-width: 90vw;
@@ -106,32 +110,4 @@ html:has(.about-content) main {
     #about-btn span {
         font-size: 20px;
     }
-}
-
-.card, .card-body {
-    height: 75%;
-}
-
-main {
-    height: 100vh;
-    overflow: hidden;
-}
-
-header {
-    height: 20%;
-    max-height: 20%;
-    overflow: hidden;
-}
-
-.list-group {
-    max-height: 200px;
-    overflow-y: auto;
-}
-
-.h-80 {
-    height: 80%;
-}
-
-.h-20 {
-    height: 20%;
 }
