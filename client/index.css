@@ -5,6 +5,21 @@
 html, body, .page {
     height: 100vh;
     background-color: orangered;
+    overflow: hidden;
+}
+
+/* Allow scrolling on about page */
+html:has(.about-content) {
+    overflow-y: auto;
+    height: auto;
+}
+
+html:has(.about-content) body,
+html:has(.about-content) .page,
+html:has(.about-content) main {
+    overflow: visible;
+    height: auto;
+    min-height: 100vh;
 }
 
 #model-container {
@@ -100,13 +115,6 @@ html, body, .page {
 main {
     height: 100vh;
     overflow: hidden;
-}
-
-/* Allow scrolling on about page */
-body:has(.about-content) main {
-    overflow-y: auto;
-    height: auto;
-    min-height: 100vh;
 }
 
 header {

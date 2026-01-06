@@ -21,9 +21,9 @@ const escMap = new Map([
 
 const ws = new WebSocket(host + ':' + port);
 
-$(document).ready(function() {
-    $('#fbutton').addClass('active');
-});
+// document.addEventListener('touchstart', function (e) {
+//     e.preventDefault();
+// });
 
 // $('#username-form').on('submit', requestUsername);
 $('#fbutton').on('click', () => {
