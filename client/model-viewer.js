@@ -92,6 +92,9 @@ loader.load(
     // Set base rotation to face forward (adjust as needed)
     model.rotation.y = BASE_ROTATION_Y;
 
+    // Initialize text
+    updateTemperatureText(0, 'F');
+
     console.log('Model loaded successfully');
   },
   (progress) => {
@@ -108,18 +111,16 @@ let mouseY = 0;
 let targetRotationX = 0;
 let targetRotationY = 0;
 
-// Track mouse movement
-window.addEventListener('mousemove', (event) => {
+window.addEventListener('pointermove', (event) => {
   // Normalize mouse position to -1 to 1
   mouseX = (event.clientX / window.innerWidth) * 2 - 1;
   mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
 
   // Calculate target rotation based on mouse position (add base rotation)
-  targetRotationY = mouseX * Math.PI * 0.3 + BASE_ROTATION_Y; // Rotate left/right (Y axis)
-  targetRotationX = -mouseY * Math.PI * 0.15; // Rotate up/down (X axis)
+  targetRotationY = mouseX * Math.PI * 0.3 + BASE_ROTATION_Y;
+  targetRotationX = -mouseY * Math.PI * 0.15;
 });
 
-// Animation loop with mouse tracking
 function animate() {
   requestAnimationFrame(animate);
 
@@ -136,7 +137,6 @@ function animate() {
 
 animate();
 
-// Handle window resize
 window.addEventListener('resize', () => {
   const newSize = getContainerSize();
   effect.setSize(newSize, newSize);
@@ -145,7 +145,8 @@ window.addEventListener('resize', () => {
 export function updateTemperatureText(temp, unit) {
   if (!model) return;
 
-  const text = `${Math.round(temp)}°${unit}`;
+  // Temp = 0 is error / initialization condition. My house will never be 0 C or F.
+  const text = temp === 0.0 ? '...' : `${Math.round(temp)}°${unit}`;
 
   // Remove ALL existing text meshes (handles race conditions from async font loading)
   const textMeshesToRemove = model.children.filter(child =>
